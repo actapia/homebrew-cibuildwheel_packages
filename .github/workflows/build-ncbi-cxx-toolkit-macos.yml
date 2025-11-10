@@ -60,7 +60,7 @@ jobs:
 
       - name: Install CMake
         run: brew install cmake
-        if: ${{ matrix.runner == "macos-13" }}
+        if: ${{ matrix.runner == 'macos-13' }}
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
