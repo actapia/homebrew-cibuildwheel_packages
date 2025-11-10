@@ -1,0 +1,78 @@
+name: build-ncbi-cxx-toolkit-macos
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        runner:
+          - macos-13
+          - macos-15-intel
+          - macos-14
+          - macos-15
+          - macos-26
+
+        include:
+          - runner: macos-13
+            codename: Venture
+
+          - runner: macos-14
+            codename: Sonoma
+
+          - runner: macos-15
+            codename: Sequoia
+
+          - runner: macos-26
+            codename: Tahoe
+            
+    runs-on: ${{matrix.runner}}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Get system information
+        run: |
+          echo macos_version="$(sw_vers -productVersion)" >> "$GITHUB_ENV"
+          echo architecture="$(uname -m)" >> "$GITHUB_ENV"
+        
+      - name: Install Homebrew
+        env:
+          CI: 1
+        run: >
+          CI=1 /bin/bash -c "$(
+          curl
+          -fsSL
+          https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+          )"
+          
+      - name: Tap homebrew/core
+        run: brew tap homebrew/core
+
+      - name: Tap this repository
+        run: brew tap ${{ github.repository }}
+
+      - name: Build bottle
+        env:
+          HOMEBREW_NO_INSTALL_FROM_API: 1
+        run: brew install --build-bottle ncbi-cxx-toolkit
+
+      - name: Upload bottle
+        id: artifact-upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{matrix.architecture}}-${{env.architecture}}-\
+          ${{env.macos_version}}"
+          path: ${{env.native_mount}}/root/rpmbuild/RPMS/
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true
+        
+          
+        
