@@ -58,9 +58,13 @@ jobs:
       - name: Tap this repository
         run: brew tap ${{ github.repository }}
 
+      - name: Install CMake
+        run: brew install cmake
+        if: ${{matrix.runner == "macos-13"}}
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}                  
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
       - name: Build bottle
         env:
