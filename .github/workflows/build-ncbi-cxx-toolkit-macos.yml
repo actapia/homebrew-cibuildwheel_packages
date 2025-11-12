@@ -71,7 +71,7 @@ jobs:
         with:
           name: "${{matrix.architecture}}-${{env.architecture}}-\
           ${{env.macos_version}}"
-          path: ncbi-cxx-toolkit-*.bottle.tar.gz
+          path: "ncbi-cxx-toolkit-*.bottle.*tar.gz"
           if-no-files-found: error
           retention-days: 1
           overwrite: true      
