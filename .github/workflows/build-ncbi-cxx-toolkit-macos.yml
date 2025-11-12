@@ -62,6 +62,9 @@ jobs:
           HOMEBREW_NO_INSTALL_FROM_API: 1
         run: brew install --build-bottle --debug ncbi-cxx-toolkit
 
+      - name: Bottle formula
+        run: brew bottle ncbi-cxx-toolkit
+
       - name: Upload bottle
         id: artifact-upload
         uses: actions/upload-artifact@v4
