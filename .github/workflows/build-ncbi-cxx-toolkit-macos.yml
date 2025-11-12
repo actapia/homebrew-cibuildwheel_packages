@@ -53,14 +53,14 @@ jobs:
       - name: Tap this repository
         run: brew tap ${{ github.repository }}
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-
       - name: Build bottle
         env:
           HOMEBREW_NO_INSTALL_FROM_API: 1
         run: brew install --build-bottle --debug ncbi-cxx-toolkit
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}        
 
       - name: Bottle formula
         run: brew bottle ncbi-cxx-toolkit
