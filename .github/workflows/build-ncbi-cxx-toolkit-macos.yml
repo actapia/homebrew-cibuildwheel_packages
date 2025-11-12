@@ -14,21 +14,16 @@ jobs:
     strategy:
       matrix:
         runner:
-          - macos-13
           - macos-15-intel
-          - macos-14
           - macos-15
           - macos-26
 
         include:
-          - runner: macos-13
-            codename: Venture
-
-          - runner: macos-14
-            codename: Sonoma
-
           - runner: macos-15
             codename: Sequoia
+
+          - runner: macos-15-intel
+            codename: Sequoia            
 
           - runner: macos-26
             codename: Tahoe
@@ -58,10 +53,6 @@ jobs:
       - name: Tap this repository
         run: brew tap ${{ github.repository }}
 
-      - name: Install CMake
-        run: brew install cmake
-        if: ${{ matrix.runner == 'macos-13' }}
-
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
@@ -80,7 +71,4 @@ jobs:
           path: ncbi-cxx-toolkit-*.bottle.tar.gz
           if-no-files-found: error
           retention-days: 1
-          overwrite: true
-        
-          
-        
+          overwrite: true      
