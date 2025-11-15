@@ -107,7 +107,7 @@ jobs:
       - name: Download bottle JSONs
         uses: actions/download-artifact@v5
         with:
-          pattern: ncbi-cxx-toolkit*.bottle.json
+          pattern: '*-json'
 
       - name: Install Homebrew
         env:
