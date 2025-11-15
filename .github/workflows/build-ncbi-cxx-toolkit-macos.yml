@@ -133,7 +133,8 @@ jobs:
 
       - name: Merge bottles
         run: >
-          /opt/homebrew/opt/ruby/bin/ruby manylinux_packages/join_bottle_json
+          set -o pipefail;
+          /opt/homebrew/opt/ruby/bin/ruby manylinux_packages/join_bottle_json.rb
           --url 'https://cs.uky.edu/~acta225/brew' *.json |
           tee "$HOME/merged.json"
 
