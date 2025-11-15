@@ -65,13 +65,87 @@ jobs:
       - name: Bottle formula
         run: brew bottle ncbi-cxx-toolkit
 
+      - name: Make bottle JSON
+        run: brew bottle --json ncbi-cxx-toolkit
+
       - name: Upload bottle
         id: artifact-upload
         uses: actions/upload-artifact@v4
         with:
-          name: "${{matrix.architecture}}-${{env.architecture}}-\
-          ${{env.macos_version}}"
+          name: "${{matrix.codename}}-${{env.architecture}}"
           path: "ncbi-cxx-toolkit-*.bottle.*tar.gz"
           if-no-files-found: error
           retention-days: 1
+          overwrite: true
+
+      - name: Upload bottle JSON
+        id: artifact-upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{matrix.codename}}-${{env.architecture}}-json"
+          path: "ncbi-cxx-toolkit-*.bottle.json"
+          if-no-files-found: error
+          retention-days: 1
           overwrite: true      
+          
+
+      - name: Download to brew repo
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.download }}
+        run: >
+          curl -f -G -u "ci:${{secrets.CI_GET_PASSWORD}}"
+          https://www.cs.uky.edu/~acta225/ci_get/get.php
+          -d "repo=${{github.repository}}"
+          -d "artifactId=${{steps.artifact-upload.outputs.artifact-id}}"  
+
+  update-formula-bottle:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+        
+      - name: Download bottle JSONs
+        uses: actions/download-artifact@v5
+        with:
+          pattern: ncbi-cxx-toolkit*.bottle.json
+
+      - name: Install Homebrew
+        env:
+          CI: 1
+        run: >
+          CI=1 /bin/bash -c "$(
+          curl
+          -fsSL
+          https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+          )"
+
+      - name: Tap homebrew/core
+        run: brew tap homebrew/core
+
+      - name: Tap this repository
+        run: brew tap ${{ github.repository }}          
+
+      - name: Download bottle merge script
+        run: git clone https://github.com/actapia/manylinux_packages
+
+      - name: Install ruby
+        run: brew install ruby
+
+      - name: Merge bottles
+        run: >
+          /opt/homebrew/opt/ruby/bin/ruby manylinux_packages/join_bottle_json
+          --url 'https://cs.uky.edu/~acta225/brew' *.json |
+          tee "$HOME/merged.json"
+
+      - name: Update formula
+        run: brew bottle --merge --write "$HOME/merged.json"
+
+      - name: Copy updated formula
+        run: >
+          mv
+          /opt/homebrew/Taps/${{github.repository}}/Formula/ncbi-cxx-toolkit.rb
+          Formula/ncbi-cxx-toolkit.rb
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          title: Update ncbi-cxx-toolkit formula bottle section
+          commit-message: Update ncbi-cxx-toolkit formula bottle section

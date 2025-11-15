@@ -2,7 +2,7 @@
 #                https://docs.brew.sh/rubydoc/Formula
 # PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class NcbiCxxToolkit < Formula
-  desc "Collection of C++ bioinformatics libraries from the National Center"\
+  desc "Collection of C++ bioinformatics libraries from the National Center "\
        "for Biotechnology Information (NCBI)"
   homepage "https://github.com/ncbi/ncbi-cxx-toolkit-public"
   url "https://github.com/ncbi/ncbi-cxx-toolkit-public/archive/refs/tags/release/29.6.0.tar.gz"
