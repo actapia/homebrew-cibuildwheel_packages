@@ -96,6 +96,7 @@ jobs:
     runs-on: macos-latest
     needs: [build]
     permissions:
+      contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v5
