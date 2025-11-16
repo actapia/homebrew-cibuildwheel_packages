@@ -135,17 +135,21 @@ jobs:
         run: >
           set -o pipefail;
           /opt/homebrew/opt/ruby/bin/ruby manylinux_packages/join_bottle_json.rb
-          --url 'https://cs.uky.edu/~acta225/brew' *.json |
+          --url 'https://cs.uky.edu/~acta225/brew' *json/* |
           tee "$HOME/merged.json"
 
       - name: Update formula
         run: brew bottle --merge --write "$HOME/merged.json"
 
       - name: Copy updated formula
-        run: >
-          mv
-          /opt/homebrew/Taps/${{github.repository}}/Formula/ncbi-cxx-toolkit.rb
-          Formula/ncbi-cxx-toolkit.rb
+        run: "mv /opt/homebrew/Library/Taps/${{github.repository}}/Formula/\
+        ncbi-cxx-toolkit.rb Formula/ncbi-cxx-toolkit.rb"
+
+      - name: Remove extra directories
+        run: |
+          rm -r *json
+          rm -rf manylinux_packages
+          
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
