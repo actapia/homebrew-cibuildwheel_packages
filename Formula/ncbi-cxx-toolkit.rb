@@ -9,6 +9,14 @@ class NcbiCxxToolkit < Formula
   sha256 "c370ede357471dfb8872c13b128ea9c16040511ad90d6bce700880a463351792"
   license "NCBI-PD"
 
+  bottle do
+    root_url "https://cs.uky.edu/~acta225/brew"
+    rebuild 1
+    sha256 cellar: :any, arm64_tahoe:   "2e859431bd1f6b3e6cb3858f02be636bd236be02ba839fab153854b641a353ce"
+    sha256 cellar: :any, arm64_sequoia: "8b9cd72d2e27da8f7f78f85546f36d32404ad9611a1875242599764dfb3b347f"
+    sha256 cellar: :any, sequoia:       "dbe497e73f3e0cae580a2d486035569512009d1dbe44b5321e14369058000006"
+  end
+
   keg_only "Includes many files that would pollute bin, lib, and so on, and this
            formula is mainly intended for CI anyway."
 
