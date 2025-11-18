@@ -9,6 +9,12 @@ on:
         required: false
         default: false
 
+      download:
+        type: boolean
+        description: "Download to RPM repo"
+        required: false
+        default: true        
+
 jobs:
   build:
     strategy:
