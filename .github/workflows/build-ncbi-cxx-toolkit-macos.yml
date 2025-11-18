@@ -70,6 +70,17 @@ jobs:
       - name: Make bottle JSON
         run: brew bottle --json ncbi-cxx-toolkit
 
+      - name: Download bottle rename script
+        run: git clone https://github.com/actapia/manylinux_packages
+
+      - name: Install ruby
+        run: brew install ruby        
+
+      - name: Rename bottle
+        run: >
+          $(brew --prefix)/opt/ruby/bin/ruby manylinux_packages/rename_bottle.rb
+          ncbi-cxx-toolkit-*.bottle.json
+
       - name: Upload bottle
         id: artifact-upload
         uses: actions/upload-artifact@v4
