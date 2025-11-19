@@ -110,67 +110,12 @@ jobs:
           -d "artifactId=${{steps.artifact-upload.outputs.artifact-id}}"  
 
   update-formula-bottle:
-    runs-on: macos-latest
+    uses: ./.github/workflows/update-formula-bottle.yml
     needs: [build]
     permissions:
       contents: write
       pull-requests: write
-    steps:
-      - uses: actions/checkout@v5
-        
-      - name: Download bottle JSONs
-        uses: actions/download-artifact@v5
-        with:
-          pattern: '*-json'
-
-      - name: Install Homebrew
-        env:
-          CI: 1
-        run: >
-          CI=1 /bin/bash -c "$(
-          curl
-          -fsSL
-          https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-          )"
-
-      - name: Tap homebrew/core
-        run: brew tap homebrew/core
-
-      - name: Tap this repository
-        run: brew tap ${{ github.repository }}          
-
-      - name: Download bottle merge script
-        run: git clone https://github.com/actapia/manylinux_packages
-
-      - name: Install ruby
-        run: brew install ruby
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}        
-
-      - name: Merge bottles
-        run: >
-          set -o pipefail;
-          /opt/homebrew/opt/ruby/bin/ruby manylinux_packages/join_bottle_json.rb
-          --url 'https://cs.uky.edu/~acta225/brew' *json/* |
-          tee "$HOME/merged.json"
-
-      - name: Update formula
-        run: brew bottle --merge --write "$HOME/merged.json"
-
-      - name: Copy updated formula
-        run: "mv /opt/homebrew/Library/Taps/${{github.repository}}/Formula/\
-        ncbi-cxx-toolkit.rb Formula/ncbi-cxx-toolkit.rb"
-
-      - name: Remove extra directories
-        run: |
-          rm -r *json
-          rm -rf manylinux_packages
-          
-
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          title: Update ncbi-cxx-toolkit formula bottle section
-          commit-message: Update ncbi-cxx-toolkit formula bottle section
+    with:
+      formula_name: ncbi-cxx-toolkit
+    secrets: inherit
+    
