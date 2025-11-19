@@ -27,6 +27,12 @@ jobs:
           - macos-26
 
         include:
+          - runner: macos-13
+            codename: Ventura
+
+          - runner: macos-14
+            codename: Sonoma
+            
           - runner: macos-15
             codename: Sequoia
 
