@@ -1,0 +1,139 @@
+name: build-boost-python-cibuildwheel-macos
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
+      download:
+        type: boolean
+        description: "Download to brew repo"
+        required: false
+        default: true        
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        runner:
+          - macos-13
+          - macos-14
+          - macos-15-intel
+          - macos-15
+          - macos-26
+
+        include:
+          - runner: macos-15
+            codename: Sequoia
+
+          - runner: macos-15-intel
+            codename: Sequoia            
+
+          - runner: macos-26
+            codename: Tahoe
+            
+    runs-on: ${{matrix.runner}}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Get system information
+        run: |
+          echo macos_version="$(sw_vers -productVersion)" >> "$GITHUB_ENV"
+          echo architecture="$(uname -m)" >> "$GITHUB_ENV"
+        
+      - name: Install Homebrew
+        env:
+          CI: 1
+        run: >
+          CI=1 /bin/bash -c "$(
+          curl
+          -fsSL
+          https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+          )"
+          
+      - name: Tap homebrew/core
+        run: brew tap homebrew/core
+
+      - name: Tap this repository
+        run: brew tap ${{ github.repository }}
+
+      - name: Install Python 3.13
+        run: brew install python@3.13
+
+      - name: Create a venv
+        run: python3.13 -m venv cibuildwheel        
+
+      - name: Install cibuildwheel
+        run: cibuildwheel/bin/python -m pip install cibuildwheel
+
+      - name: Download Python install script
+        run: git clone https://github.com/actapia/manylinux_packages
+
+      - name: Install all Python versions
+        env:
+          CI: 1
+        run: >
+          cibuildwheel/bin/python
+          manylinux_packages/boost-python-manylinux/brew/install_all.py
+
+      - name: Build bottle
+        env:
+          HOMEBREW_NO_INSTALL_FROM_API: 1
+        run: brew install --build-bottle --debug boost-python-cibuildwheel
+
+      - name: Bottle formula
+        run: brew bottle boost-python-cibuildwheel
+
+      - name: Make bottle JSON
+        run: brew bottle --json boost-python-cibuildwheel
+
+      - name: Install ruby
+        run: brew install ruby        
+
+      - name: Rename bottle
+        run: >
+          $(brew --prefix)/opt/ruby/bin/ruby manylinux_packages/rename_bottle.rb
+          boost-python-cibuildwheel-*.bottle.json
+
+      - name: Upload bottle
+        id: artifact-upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{matrix.codename}}-${{env.architecture}}"
+          path: "boost-python-cibuildwheel-*.bottle.*tar.gz"
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true
+
+      - name: Upload bottle JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{matrix.codename}}-${{env.architecture}}-json"
+          path: "boost-python-cibuildwheel-*.bottle.json"
+          if-no-files-found: error
+          retention-days: 1
+          overwrite: true      
+          
+
+      - name: Download to brew repo
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.download }}
+        run: >
+          curl -f -G -u "ci:${{secrets.CI_GET_PASSWORD}}"
+          https://www.cs.uky.edu/~acta225/ci_get/get.php
+          -d "repo=${{github.repository}}"
+          -d "artifactId=${{steps.artifact-upload.outputs.artifact-id}}"  
+
+  update-formula-bottle:
+    uses: ./.github/workflows/update-formula-bottle.yml
+    needs: [build]
+    permissions:
+      contents: write
+      pull-requests: write
+    with:
+      formula_name: boost-python-cibuildwheel
+    secrets: inherit
+    
