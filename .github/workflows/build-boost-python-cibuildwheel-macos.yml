@@ -20,16 +20,12 @@ jobs:
     strategy:
       matrix:
         runner:
-          - macos-13
           - macos-14
           - macos-15-intel
           - macos-15
           - macos-26
 
         include:
-          - runner: macos-13
-            codename: Ventura
-
           - runner: macos-14
             codename: Sonoma
             
