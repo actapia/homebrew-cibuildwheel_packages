@@ -8,6 +8,15 @@ class BoostPythonCibuildwheel < Formula
   sha256 "85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a"
   license "BSL-1.0"
 
+  bottle do
+    root_url "https://cs.uky.edu/~acta225/brew"
+    rebuild 1
+    sha256 cellar: :any, arm64_tahoe:   "2da85ccbdc977cd31d2065d97bf8caf613e41e5e4024727ea97d5aea6edd0e34"
+    sha256 cellar: :any, arm64_sequoia: "7889568fc86bb0653aaa7cd86f06db12fb5c49bb247821add5cc4a8b5ea974d4"
+    sha256 cellar: :any, arm64_sonoma:  "7e702fa03bf1cfadc9f5c9e48f3348a2d531dfe61c4f828414d17531b664226a"
+    sha256 cellar: :any, sequoia:       "d03b6262d77cda335dfbd3eb5a2c6687bdda64562112b59927d6ddad216f2c7c"
+  end
+
   keg_only "it conflicts with other boost packages and is intended for CI only"
 
   depends_on "python@3.13" => :build
