@@ -119,7 +119,7 @@ class BoostPythonCibuildwheel < Formula
     include.mkdir    
     Dir.mktmpdir do |include_tmp|
       tmpd = Pathname(include_tmp)
-      system "./dist/bin/bcp", "python", tmpd.to_str
+      system "./dist/bin/bcp", "python", "utility", tmpd.to_str
       include.install (tmpd / "boost").to_str
     end
   end
