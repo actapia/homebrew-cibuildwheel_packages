@@ -22,7 +22,6 @@ class BoostPythonCibuildwheel < Formula
   keg_only 'it conflicts with other boost packages and is intended for CI only'
 
   depends_on 'python@3.13' => :build
-  depends_on 'toml2json' => :build
 
   # depends_on "cmake" => :build
 
@@ -37,22 +36,21 @@ class BoostPythonCibuildwheel < Formula
     system (Formula['python@3.13'].opt_bin / 'python3.13').to_str, '-m', \
            'venv', venv_loc.to_str
     venv_python = venv_loc / 'bin/python'
-    system venv_python.to_str, '-m', 'pip', 'install', 'cibuildwheel'
-    venv_lib = venv_loc / 'lib'
-    build_platforms_toml = venv_lib.glob('*')[0] / \
-                           'site-packages/cibuildwheel/resources/' \
-                           'build-platforms.toml'
-    build_platform = nil
+    system venv_python.to_str, '-m', 'pip', 'install', 'cibw-install-pythons'
+    configs = nil
     Open3.popen3(
-      'toml2json',
-      build_platforms_toml.to_str
+      { 'CI' => '1', 'CIBW_CACHE_PATH' => '/Library/Caches/cibuildwheel' },
+      venv_python.to_str,
+      '-m',
+      'cibw-install-pythons',
+      'macos',
+      '--fake-lock'
     ) do |stdin, stdout, stderr, thread|
       stdin.close
-      build_platform = JSON.parse(stdout.read)['macos']
+      configs = stdout.map { |x| JSON.parse(x) }
       stderr.read
       raise 'Build failed!' if thread.value.exitstatus.positive?
     end
-    configs = build_platform['python_configurations']
     arch = RUBY_PLATFORM.split('-')[0]
     system './bootstrap.sh'
     system './b2', 'tools/bcp'
@@ -70,18 +68,16 @@ class BoostPythonCibuildwheel < Formula
     end
     File.delete('project-config.jam')
     configs.each do |config|
+      p config
       next unless config['identifier'].end_with?(arch)
+      next if config['identifier'].start_with?('gp')
 
       ft = ''
-      if config['identifier'].start_with?('cp')
-        ft = 't' if config['identifier'].include?('t-macos')
-        base_path = Pathname(
-          "/Library/Frameworks/Python#{ft.upcase}.framework/Versions/",
-        ) / config['version']
-      else # if config["identifier"].start_with?("pp")
-        archive_filename = Pathname(URI.parse(config['url'])).basename
-        base_path = Pathname(Dir.home) / 'Library/Caches/cibuildwheel' / \
-                    archive_filename.basename(archive_filename.extname)
+      python_path = Pathname(config['python'])
+      base_path = python_path.parent.parent
+      if config['identifier'].start_with?('cp') && \
+         config['identifier'].include?('t-macos')
+        ft = 't'
       end
       python_name = config['identifier'].start_with?('pp') ? 'pypy' : 'python'
       extended_name = "#{python_name}#{config['version']}#{ft}"
