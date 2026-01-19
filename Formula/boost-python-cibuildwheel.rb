@@ -107,9 +107,11 @@ class BoostPythonCibuildwheel < Formula
       short_identifier = config['identifier'].split('-')[0]
       system './b2', 'stage', '--clean-all', "--build-dir=#{BUILD_DIR}"
       FileUtils.remove_dir(BUILD_DIR)
-      system './b2', 'stage', '--with-python', \
-             "--python-buildid=#{short_identifier}", 'link=shared', \
-             'variant=release', "--build-dir=#{BUILD_DIR}"
+      b2_args = ['./b2', 'stage', '--with-python', \
+                 "--python-buildid=#{short_identifier}", 'link=shared', \
+                 'variant=release', "--build-dir=#{BUILD_DIR}"]
+      b2_args += ['define=Py_GIL_DISABLED'] unless ft.empty?
+      system(*b2_args)
     end
     lib.mkdir
     Pathname('stage/lib').glob('*') do |install_file|
