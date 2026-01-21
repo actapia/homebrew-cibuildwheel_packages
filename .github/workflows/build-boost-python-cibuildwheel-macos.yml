@@ -79,9 +79,7 @@ jobs:
         env:
           CI: 1
           CIBW_CACHE_PATH: /Library/Caches/cibuildwheel
-        run: >
-          cibuildwheel/bin/python
-          -m cibw-install-pythons macos --ensurepip
+        run: cibuildwheel/bin/python -m cibw-install-pythons macos
 
       - name: Build bottle
         env:
