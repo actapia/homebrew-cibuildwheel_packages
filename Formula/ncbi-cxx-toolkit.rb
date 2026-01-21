@@ -22,6 +22,7 @@ class NcbiCxxToolkit < Formula
 
   depends_on "cmake" => :build
   depends_on "zstd"
+  depends_on "lzo"  
   depends_on "boost" => :build
   uses_from_macos "zlib"
   uses_from_macos "pcre"
