@@ -69,18 +69,19 @@ jobs:
       - name: Create a venv
         run: python3.13 -m venv cibuildwheel        
 
-      - name: Install cibuildwheel
-        run: cibuildwheel/bin/python -m pip install cibuildwheel
-
-      - name: Download Python install script
+      - name: Download rename script
         run: git clone https://github.com/actapia/manylinux_packages
+
+      - name: Install cibw-install-pythons
+        run: cibuildwheel/bin/python -m pip install cibw-install-pythons
 
       - name: Install all Python versions
         env:
           CI: 1
+          CIBW_CACHE_PATH: /Library/Caches/cibuildwheel
         run: >
           cibuildwheel/bin/python
-          manylinux_packages/boost-python-manylinux/brew/install_all.py
+          -m cibw-install-pythons macos --ensurepip
 
       - name: Build bottle
         env:
