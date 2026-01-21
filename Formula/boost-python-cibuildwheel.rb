@@ -44,7 +44,8 @@ class BoostPythonCibuildwheel < Formula
       '-m',
       'cibw-install-pythons',
       'macos',
-      '--fake-lock'
+      '--fake-lock',
+      '--ensurepip'
     ) do |stdin, stdout, stderr, thread|
       stdin.close
       configs = stdout.map { |x| JSON.parse(x) }
