@@ -12,11 +12,11 @@ class BoostPythonCibuildwheel < Formula
 
   bottle do
     root_url "https://cs.uky.edu/~acta225/brew"
-    rebuild 2
-    sha256 cellar: :any, arm64_tahoe:   "29274f000963d720f601a215a61960a4bd9f0bc86d13200a9a486782a8d4e53a"
-    sha256 cellar: :any, arm64_sequoia: "c83ae26c8bfbf5ed44d0f96b5ff2b83d7328cd88a98e76ef28ea95f2b95d2240"
-    sha256 cellar: :any, arm64_sonoma:  "be45fb699f5d61aa38a5b20b9a14d9d78d356e4543e4d7fb8eb991850c018a70"
-    sha256 cellar: :any, sequoia:       "a5cbb2a24705b3170cf7d21e2833b4e8da7b3ee888cdbbe7b9c79b3eabd4c96e"
+    rebuild 3
+    sha256 cellar: :any, arm64_tahoe:   "3ac1fe490f0e2dde0c9d6b2123ced1b710778a8bd516f97db483ddd4a6e85693"
+    sha256 cellar: :any, arm64_sequoia: "e5127f10ef81652825c997a8b8eda5f2628315947051ddee7ebee33d7098f66a"
+    sha256 cellar: :any, arm64_sonoma:  "8d6b6c33b16cc8f9560ab188d53e6d51f6dba4a8fa304645716020f4990761fd"
+    sha256 cellar: :any, sequoia:       "c07089252133d1dda37e380b8b464217e52d909c6dfacf7b0630d244eef8d37d"
   end
 
   keg_only 'it conflicts with other boost packages and is intended for CI only'
