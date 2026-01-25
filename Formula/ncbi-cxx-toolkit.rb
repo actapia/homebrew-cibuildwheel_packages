@@ -11,10 +11,10 @@ class NcbiCxxToolkit < Formula
 
   bottle do
     root_url "https://cs.uky.edu/~acta225/brew"
-    rebuild 2
-    sha256 cellar: :any, arm64_tahoe:   "acc1fc6a2c28ad5e954646685e1d8895ccbe4c26c225237ea5ec19cad62d667d"
-    sha256 cellar: :any, arm64_sequoia: "f743924442cfaf88cceabc8672680eab009c62316be1f54fb761aa378253c094"
-    sha256 cellar: :any, sequoia:       "78ed748470a1719d2f552cc44ecaf444dd0ddeced9d82c9a91ee33febf6d52ad"
+    rebuild 3
+    sha256 cellar: :any, arm64_tahoe:   "0539ee6fac5db76a2bd17cc3d88c5f284cf89cd6caea597c50f89f194c568e89"
+    sha256 cellar: :any, arm64_sequoia: "09b2a50b835e42cd2d391fae9b8f2360ae38cb057eb805978ef7192dfd9ad3b3"
+    sha256 cellar: :any, sequoia:       "c5e97f6f6facb6d7aac5ba0bdf357566edd86c2de479e0297874776c627c061d"
   end
 
   keg_only "Includes many files that would pollute bin, lib, and so on, and this
