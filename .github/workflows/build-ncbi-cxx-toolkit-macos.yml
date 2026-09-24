@@ -20,17 +20,9 @@ jobs:
     strategy:
       matrix:
         runner:
-          - macos-15-intel
-          - macos-15
           - macos-26
 
         include:
-          - runner: macos-15
-            codename: Sequoia
-
-          - runner: macos-15-intel
-            codename: Sequoia            
-
           - runner: macos-26
             codename: Tahoe
             
