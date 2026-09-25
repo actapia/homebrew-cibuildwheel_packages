@@ -45,11 +45,11 @@ jobs:
           https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
           )"
           
-      - name: Tap homebrew/core
-        run: brew tap homebrew/core
-
       - name: Tap this repository
         run: brew tap ${{ github.repository }}
+
+      - name: Trust this repository
+        run: brew trust ${{ github.repository }}
 
       - name: Build bottle
         env:
