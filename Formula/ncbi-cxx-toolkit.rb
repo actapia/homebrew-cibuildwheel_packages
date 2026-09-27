@@ -10,6 +10,7 @@ class NcbiCxxToolkit < Formula
   license "NCBI-PD"
 
   bottle do
+    root_url "https://cs.uky.edu/~acta225/brew"    
     rebuild 4
     sha256 cellar: :any, arm64_tahoe: "c9ada836559c40ecf2d1bdd26d605226f6a773f283b1a4e0d9e6cf89dfe76dd4"
   end
