@@ -10,9 +10,8 @@ class NcbiCxxToolkit < Formula
   license "NCBI-PD"
 
   bottle do
-    root_url "https://cs.uky.edu/~acta225/brew"    
-    rebuild 4
-    sha256 cellar: :any, arm64_tahoe: "c9ada836559c40ecf2d1bdd26d605226f6a773f283b1a4e0d9e6cf89dfe76dd4"
+    rebuild 5
+    sha256 cellar: :any, arm64_tahoe: "437e898c15fa9f6b9521c50a102217367e65438da80fb0e767761b196c840997"
   end
 
   keg_only "Includes many files that would pollute bin, lib, and so on, and this
