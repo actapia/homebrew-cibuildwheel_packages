@@ -22,6 +22,7 @@ class NcbiCxxToolkit < Formula
   depends_on "zstd"
   depends_on "lzo"  
   depends_on "boost" => :build
+  depends_on "lmdb"
   uses_from_macos "zlib"
   uses_from_macos "pcre"
   uses_from_macos "sqlite"
